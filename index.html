@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marcar Opções</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .options {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Selecione ATC Comunicação</h1>
+    <div class="options">
+        <label><input type="checkbox" value="O processo de comunicação"> O processo de comunicação</label><br>
+        <label><input type="checkbox" value="Amplie seu vocabulário"> Amplie seu vocabulário</label><br>
+        <label><input type="checkbox" value="Domine o assunto"> Domine o assunto</label><br>
+        <label><input type="checkbox" value="Ortografia e gramática"> Ortografia e gramática</label><br>
+        <label><input type="checkbox" value="Ruído na comunicação"> Ruído na comunicação</label><br>
+        <label><input type="checkbox" value="Sotaques e regionalismos"> Sotaques e regionalismos</label><br>
+        <label><input type="checkbox" value="Começo, meio e fim"> Começo, meio e fim</label><br>
+        <label><input type="checkbox" value="Tiques na fala e nos gestos"> Tiques na fala e nos gestos</label><br>
+        <label><input type="checkbox" value="Termos que se deve evitar"> Termos que se deve evitar</label><br>
+        <label><input type="checkbox" value="Exercício: Apresentação"> Exercício: Apresentação</label><br>
+        <label><input type="checkbox" value="Avaliação: Ajustes"> Avaliação: Ajustes</label><br>
+        <label><input type="checkbox" value="Avaliação: Avanços"> Avaliação: Avanços</label><br>
+        <label><input type="checkbox" value="Conheça seu público"> Conheça seu público</label><br>
+        <label><input type="checkbox" value="Perfil x Abordagem"> Perfil x Abordagem</label><br>
+        <label><input type="checkbox" value="Respeito ao tempo"> Respeito ao tempo</label><br>
+        <label><input type="checkbox" value="Aspectos da voz"> Aspectos da voz</label><br>
+        <label><input type="checkbox" value="A questão do ritmo"> A questão do ritmo</label><br>
+        <label><input type="checkbox" value="Pausas e ênfases"> Pausas e ênfases</label><br>
+        <label><input type="checkbox" value="Leitura e interpretação"> Leitura e interpretação</label><br>
+        <label><input type="checkbox" value="Respiração"> Respiração</label><br>
+        <label><input type="checkbox" value="Dicção"> Dicção</label><br>
+        <label><input type="checkbox" value="Usando o PowerPoint"> Usando o PowerPoint</label><br>
+        <label><input type="checkbox" value="Dicas sobre PowerPoint"> Dicas sobre PowerPoint</label><br>
+        <label><input type="checkbox" value="Uso do microfone"> Uso do microfone</label><br>
+        <label><input type="checkbox" value="O visual e a fala"> O visual e a fala</label><br>
+        <label><input type="checkbox" value="Dicas sobre trajes"> Dicas sobre trajes</label><br>
+        <label><input type="checkbox" value="Expressão corporal"> Expressão corporal</label><br>
+        <label><input type="checkbox" value="Movimentos de mãos e braços"> Movimentos de mãos e braços</label><br>
+        <label><input type="checkbox" value="Olhe para a plateia"> Olhe para a plateia</label><br>
+        <label><input type="checkbox" value="Tribuna e TP"> Tribuna e TP</label><br>
+        <label><input type="checkbox" value="Cuidados com a voz"> Cuidados com a voz</label><br>
+        <label><input type="checkbox" value="Como aquecer e desaquecer a voz"> Como aquecer e desaquecer a voz</label><br>
+        <label><input type="checkbox" value="Voz e alimentação"> Voz e alimentação</label><br>
+        <label><input type="checkbox" value="Medo de se expor"> Medo de se expor</label><br>
+        <label><input type="checkbox" value="Deu branco! E agora?"> Deu branco! E agora?</label><br>
+        <label><input type="checkbox" value="Aprenda com seus erros"> Aprenda com seus erros</label><br>
+        <label><input type="checkbox" value="A questão das piadas"> A questão das piadas</label><br>
+        <label><input type="checkbox" value="Falando de improviso"> Falando de improviso</label><br>
+        <label><input type="checkbox" value="Leitura em público"> Leitura em público</label><br>
+    </div>
+    <label for="fileName">Nome do arquivo (sem extensão):</label>
+    <input type="text" id="fileName" placeholder="opcoes">
+    <button id="saveButton">Salvar Opções</button>
+    <input type="file" id="fileInput" accept=".json">
+    <button id="loadButton">Carregar Opções</button>
+
+    <script>
+        document.getElementById('saveButton').addEventListener('click', function() {
+            const checkboxes = document.querySelectorAll('.options input[type="checkbox"]');
+            const selectedOptions = [];
+
+            checkboxes.forEach((checkbox) => {
+                if (checkbox.checked) {
+                    selectedOptions.push(checkbox.value);
+                }
+            });
+
+            const jsonData = JSON.stringify(selectedOptions, null, 2);
+            const fileName = document.getElementById('fileName').value || 'opcoes';
+
+            const blob = new Blob([jsonData], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${fileName}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+
+        document.getElementById('loadButton').addEventListener('click', function() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+
+                reader.onload = function(event) {
+                    const jsonData = event.target.result;
+                    const selectedOptions = JSON.parse(jsonData);
+
+                    const checkboxes = document.querySelectorAll('.options input[type="checkbox"]');
+                    checkboxes.forEach((checkbox) => {
+                        checkbox.checked = selectedOptions.includes(checkbox.value);
+                    });
+                };
+
+                reader.readAsText(file);
+            } else {
+                alert('Por favor, selecione um arquivo JSON.');
+            }
+        });
+    </script>
+</body>
+</html>
